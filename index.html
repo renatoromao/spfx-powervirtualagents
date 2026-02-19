@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Power Virtual Agents - Chatbot</title>
+  <style>
+    /* ── Reset & Base ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e8eaf6 0%, #f5f5f5 100%);
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Header ───────────────────────────────────── */
+    header {
+      background: #5b2d8e;
+      color: #fff;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.15);
+    }
+    header svg { flex-shrink: 0; }
+    header h1 { font-size: 1.25rem; font-weight: 600; }
+
+    /* ── Main ──────────────────────────────────────── */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      gap: 2rem;
+    }
+
+    /* ── Hero Section ─────────────────────────────── */
+    .hero {
+      text-align: center;
+      max-width: 600px;
+    }
+    .hero h2 {
+      font-size: 1.75rem;
+      margin-bottom: .5rem;
+      color: #5b2d8e;
+    }
+    .hero p {
+      font-size: 1rem;
+      color: #555;
+      line-height: 1.6;
+    }
+
+    /* ── Chat Container ───────────────────────────── */
+    .chat-container {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Chat header */
+    .chat-header {
+      background: #5b2d8e;
+      color: #fff;
+      padding: .85rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      font-weight: 600;
+      font-size: .95rem;
+    }
+    .chat-header .status {
+      width: 8px; height: 8px;
+      background: #4caf50;
+      border-radius: 50%;
+      margin-left: auto;
+    }
+
+    /* Messages area */
+    .chat-messages {
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: .75rem;
+      min-height: 260px;
+      max-height: 350px;
+      overflow-y: auto;
+      background: #fafafa;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: .65rem .9rem;
+      border-radius: 12px;
+      font-size: .9rem;
+      line-height: 1.45;
+      animation: fadeIn .3s ease;
+    }
+    .message.bot {
+      align-self: flex-start;
+      background: #ede7f6;
+      color: #333;
+      border-bottom-left-radius: 4px;
+    }
+    .message.user {
+      align-self: flex-end;
+      background: #5b2d8e;
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Input area */
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #e0e0e0;
+    }
+    .chat-input input {
+      flex: 1;
+      border: none;
+      padding: .85rem 1rem;
+      font-size: .9rem;
+      outline: none;
+      font-family: inherit;
+    }
+    .chat-input button {
+      background: #5b2d8e;
+      color: #fff;
+      border: none;
+      padding: 0 1.1rem;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background .2s;
+    }
+    .chat-input button:hover { background: #7b1fa2; }
+
+    /* ── Footer ────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: .8rem;
+      color: #888;
+    }
+    footer a { color: #5b2d8e; text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ────────────────────────────────── */
+    @media (max-width: 480px) {
+      header h1 { font-size: 1rem; }
+      .hero h2  { font-size: 1.35rem; }
+      .chat-container { max-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── Header ──────────────────────────────────── -->
+  <header>
+    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24">
+      <path fill="#fff" d="M20 2H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h3l3 4 3-4h7a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2Zm-8 13H7v-2h5v2Zm5-4H7V9h10v2Z"/>
+    </svg>
+    <h1>Power Virtual Agents &mdash; Chatbot Demo</h1>
+  </header>
+
+  <!-- ─── Main Content ────────────────────────────── -->
+  <main>
+    <section class="hero">
+      <h2>Bem-vindo ao Assistente Virtual</h2>
+      <p>
+        Este é um exemplo de interface amigável para o chatbot
+        <strong>Power Virtual Agents</strong>, integrado ao SharePoint
+        por meio do <strong>SPFx</strong>. Envie uma mensagem abaixo
+        para experimentar a interação.
+      </p>
+    </section>
+
+    <!-- Chat widget -->
+    <div class="chat-container">
+      <div class="chat-header">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24">
+          <path fill="#fff" d="M12 2a7 7 0 0 0-7 7c0 2.5 1.5 4.7 3.5 5.8V17a1 1 0 0 0 1 1h5a1 1 0 0 0 1-1v-2.2C17.5 13.7 19 11.5 19 9a7 7 0 0 0-7-7Zm-2 18v1a2 2 0 0 0 4 0v-1h-4Z"/>
+        </svg>
+        Assistente Virtual
+        <span class="status" title="Online"></span>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="message bot">Olá! 👋 Eu sou o assistente virtual. Como posso ajudá-lo hoje?</div>
+      </div>
+
+      <form class="chat-input" id="chatForm">
+        <input
+          type="text"
+          id="chatInput"
+          placeholder="Digite sua mensagem..."
+          autocomplete="off"
+          required
+        />
+        <button type="submit" aria-label="Enviar mensagem">&#10148;</button>
+      </form>
+    </div>
+  </main>
+
+  <!-- ─── Footer ──────────────────────────────────── -->
+  <footer>
+    Desenvolvido por <a href="https://github.com/renatoromao" target="_blank" rel="noopener">Renato Romão</a>
+    &middot; Projeto
+    <a href="https://github.com/renatoromao/spfx-powervirtualagents" target="_blank" rel="noopener">spfx-powervirtualagents</a>
+  </footer>
+
+  <!-- ─── Script ──────────────────────────────────── -->
+  <script>
+    (function () {
+      const form = document.getElementById('chatForm');
+      const input = document.getElementById('chatInput');
+      const messages = document.getElementById('chatMessages');
+
+      const botResponses = [
+        'Entendido! Deixe-me verificar isso para você.',
+        'Claro, posso ajudar com isso. Um momento, por favor.',
+        'Boa pergunta! Aqui está o que encontrei...',
+        'Obrigado pela sua mensagem. Estou processando a sua solicitação.',
+        'Desculpe, não entendi. Poderia reformular a sua pergunta?'
+      ];
+
+      function addMessage(text, sender) {
+        const div = document.createElement('div');
+        div.className = 'message ' + sender;
+        div.textContent = text;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+      }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+        const text = input.value.trim();
+        if (!text) return;
+
+        addMessage(text, 'user');
+        input.value = '';
+
+        setTimeout(function () {
+          const reply = botResponses[Math.floor(Math.random() * botResponses.length)];
+          addMessage(reply, 'bot');
+        }, 800);
+      });
+    })();
+  </script>
+</body>
+</html>
